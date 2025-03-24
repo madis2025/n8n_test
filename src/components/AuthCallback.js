@@ -9,7 +9,7 @@ export default function AuthCallback() {
     useEffect(() => {
         const exchangeCode = async (code, email) => {
             try {
-                const response = await fetch('http://localhost:3001/api/exchange-code', {
+                const response = await fetch('http://localhost:301/api/exchange-code', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
