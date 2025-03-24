@@ -22,8 +22,14 @@ const tokenStore = new Map();
 
 app.post('/api/exchange-code', async (req, res) => {
     const { code, email } = req.body;
-    console.log("exchanging code");
+    console.log("Exchanging code for email:", email);
     try {
+        // Log the values we're using
+        console.log("Using environment variables:");
+        console.log("CLIENT_ID:", process.env.MICROSOFT_CLIENT_ID);
+        console.log("REDIRECT_URI:", process.env.REDIRECT_URI);
+        // Don't log the client secret for security reasons
+
         // Exchange code for tokens
         const tokenResponse = await axios.post('https://login.microsoftonline.com/common/oauth2/v2.0/token',
             new URLSearchParams({
@@ -36,23 +42,33 @@ app.post('/api/exchange-code', async (req, res) => {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
-        }
-        );
+        });
 
         const tokens = tokenResponse.data;
 
         // Add expiration time (expires_in is in seconds)
         tokens.expires_at = Date.now() + (tokens.expires_in * 1000);
 
-        // Store tokens (use a proper database in production)
+        // Store tokens
         tokenStore.set(email, tokens);
 
         res.json({ success: true });
     } catch (error) {
-        console.error('Token exchange error:', error.response?.data || error.message);
+        // Improved error logging
+        console.error('Token exchange error details:');
+        if (error.response) {
+            console.error('Response status:', error.response.status);
+            console.error('Response data:', error.response.data);
+            console.error('Response headers:', error.response.headers);
+        } else if (error.request) {
+            console.error('No response received:', error.request);
+        } else {
+            console.error('Error setting up request:', error.message);
+        }
+
         res.status(500).json({
             success: false,
-            error: 'Failed to exchange code for tokens'
+            error: error.response?.data?.error_description || error.message
         });
     }
 });
