@@ -12,7 +12,7 @@ const tokenStore = new Map();
 
 app.post('/api/exchange-code', async (req, res) => {
     const { code, email } = req.body;
-
+    console.log("exchanging code");
     try {
         // Exchange code for tokens
         const tokenResponse = await axios.post('https://login.microsoftonline.com/common/oauth2/v2.0/token',
