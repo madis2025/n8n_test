@@ -11,13 +11,20 @@ export default function AuthCallback() {
         const exchangeCode = async (code, email) => {
             try {
                 console.log("backend backend");
-                const response = await axios.post('https://20.119.83.80:4001/api/exchange-code', {
-                    code: code,
-                    email: email
-                });
+                // Create a custom axios instance that ignores SSL validation
+                const response = await axios.post('https://20.119.83.80:4001/api/exchange-code',
+                    {
+                        code: code,
+                        email: email
+                    },
+                    {
+                        httpsAgent: new (require('https').Agent)({
+                            rejectUnauthorized: false
+                        })
+                    }
+                );
 
-                const data = await response.data;
-                if (data.success) {
+                if (response.data.success) {
                     setStatus('Authorization successful! Redirecting...');
                     // Store the email in sessionStorage for the webhook page
                     sessionStorage.setItem('userEmail', email);
