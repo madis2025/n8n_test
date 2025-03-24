@@ -11,18 +11,17 @@ export default function AuthCallback() {
         const exchangeCode = async (code, email) => {
             try {
                 console.log("backend backend");
-                // Create a custom axios instance that ignores SSL validation
-                const response = await axios.post('https://20.119.83.80:4001/api/exchange-code',
-                    {
-                        code: code,
-                        email: email
-                    },
-                    {
-                        httpsAgent: new (require('https').Agent)({
-                            rejectUnauthorized: false
-                        })
+                const instance = axios.create({
+                    validateStatus: () => true,  // Accept any status code
+                    headers: {
+                        'Content-Type': 'application/json',
                     }
-                );
+                });
+
+                const response = await instance.post('https://20.119.83.80:4001/api/exchange-code', {
+                    code: code,
+                    email: email
+                });
 
                 if (response.data.success) {
                     setStatus('Authorization successful! Redirecting...');
