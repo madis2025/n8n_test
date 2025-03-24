@@ -12,37 +12,41 @@ export default function AuthCallback() {
             try {
                 console.log("backend backend");
                 const instance = axios.create({
-                    validateStatus: () => true,  // Accept any status code
+                    validateStatus: () => true,
                     headers: {
                         'Content-Type': 'application/json',
-                    }
+                    },
+                    withCredentials: true
                 });
 
+                // Add error handling for the response
                 const response = await instance.post('https://20.119.83.80:4001/api/exchange-code', {
                     code: code,
                     email: email
+                }).catch(error => {
+                    console.error('Request failed:', error.message);
+                    throw error;
                 });
 
-                if (response.data.success) {
+                if (response && response.data && response.data.success) {
                     setStatus('Authorization successful! Redirecting...');
-                    // Store the email in sessionStorage for the webhook page
                     sessionStorage.setItem('userEmail', email);
-                    // Redirect to webhook test page after a short delay
                     setTimeout(() => {
                         navigate('/webhook-test');
                     }, 1500);
                 } else {
-                    setStatus('Failed to exchange code. Please try again.');
+                    const errorMessage = response?.data?.error || 'Unknown error occurred';
+                    setStatus(`Failed to exchange code: ${errorMessage}`);
                 }
             } catch (error) {
                 console.error('Error exchanging code:', error);
-                setStatus('An error occurred. Please try again.');
+                setStatus(`An error occurred: ${error.message}`);
             }
         };
 
         const queryParams = new URLSearchParams(location.search);
         const code = queryParams.get('code');
-        const state = queryParams.get('state'); // state contains the email
+        const state = queryParams.get('state');
 
         if (code && state) {
             exchangeCode(code, state);

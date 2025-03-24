@@ -6,7 +6,15 @@ const fs = require('fs');
 require('dotenv').config();
 
 const app = express();
-app.use(cors());
+
+// Update CORS configuration
+app.use(cors({
+    origin: 'https://20.119.83.80:3000',
+    credentials: true,
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
 
 // Temporary token storage (replace with a database in production)
@@ -110,6 +118,8 @@ const options = {
 };
 
 // Create HTTPS server
-https.createServer(options, app).listen(PORT, () => {
+const server = https.createServer(options, app);
+
+server.listen(PORT, '0.0.0.0', () => {
     console.log(`HTTPS Server running on port ${PORT}`);
 }); 
