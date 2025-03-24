@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
+const https = require('https');
+const fs = require('fs');
 require('dotenv').config();
 
 const app = express();
@@ -100,6 +102,14 @@ app.post('/api/trigger-webhook', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 4001;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+
+// SSL certificate configuration
+const options = {
+    key: fs.readFileSync('./certificates/key.pem'),
+    cert: fs.readFileSync('./certificates/cert.pem')
+};
+
+// Create HTTPS server
+https.createServer(options, app).listen(PORT, () => {
+    console.log(`HTTPS Server running on port ${PORT}`);
 }); 

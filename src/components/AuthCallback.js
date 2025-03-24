@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export default function AuthCallback() {
     const [status, setStatus] = useState('Processing...');
@@ -10,15 +11,12 @@ export default function AuthCallback() {
         const exchangeCode = async (code, email) => {
             try {
                 console.log("backend backend");
-                const response = await fetch('http://20.119.83.80:4001/api/exchange-code', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ code, email })
+                const response = await axios.post('https://20.119.83.80:4001/api/exchange-code', {
+                    code: code,
+                    email: email
                 });
 
-                const data = await response.json();
+                const data = await response.data;
                 if (data.success) {
                     setStatus('Authorization successful! Redirecting...');
                     // Store the email in sessionStorage for the webhook page
