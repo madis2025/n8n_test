@@ -26,7 +26,7 @@ export default function WebhookTest() {
         setStatus('Sending webhook...');
 
         try {
-            const response = await fetch('http://localhost:301/api/trigger-webhook', {
+            const response = await fetch('http://localhost:4001/api/trigger-webhook', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
