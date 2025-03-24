@@ -10,7 +10,7 @@ export default function AuthCallback() {
         const exchangeCode = async (code, email) => {
             try {
                 console.log("backend backend");
-                const response = await fetch('http://localhost:4001/api/exchange-code', {
+                const response = await fetch('http://20.119.83.80:4001/api/exchange-code', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
