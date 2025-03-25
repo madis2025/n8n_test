@@ -1,9 +1,24 @@
+require('dotenv').config();
+
+// Add this check at the start of your file
+const requiredEnvVars = ['MICROSOFT_CLIENT_ID', 'MICROSOFT_CLIENT_SECRET', 'REDIRECT_URI'];
+const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
+
+if (missingEnvVars.length > 0) {
+    console.error('Error: Missing required environment variables:', missingEnvVars);
+    console.error('Current environment variables:', {
+        MICROSOFT_CLIENT_ID: process.env.MICROSOFT_CLIENT_ID,
+        REDIRECT_URI: process.env.REDIRECT_URI,
+        // Don't log the client secret
+    });
+    process.exit(1);
+}
+
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const https = require('https');
 const fs = require('fs');
-require('dotenv').config();
 
 const app = express();
 
