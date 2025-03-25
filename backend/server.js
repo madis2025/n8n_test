@@ -90,9 +90,17 @@ app.post('/api/exchange-code', async (req, res) => {
 
 // Update the tokens endpoint to return all tokens
 app.get('/api/tokens', (req, res) => {
-    // Convert Map to a regular object
-    const tokensObject = Object.fromEntries(tokenStore);
-    res.json(tokensObject);
+    const email = req.query.user_id;
+    if (!email) {
+        return res.status(400).json({ error: 'user_id parameter is required' });
+    }
+
+    const tokens = tokenStore.get(email);
+    if (!tokens) {
+        return res.status(404).json({ error: 'Tokens not found' });
+    }
+
+    res.json(tokens);
 });
 
 // Keep the existing endpoint for backward compatibility
